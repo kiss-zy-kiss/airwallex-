@@ -1,28 +1,23 @@
-####Setup API Test framework using your most comfortable tech stack
+#### Setup API Test framework using your most comfortable tech stack
 - 语言：python3.6
 - 自动化框架：httprunner(unittest、requests)
 
-####The tests will run in different environments, so make the endpoint url configurable
+#### The tests will run in different environments, so make the endpoint url configurable
 - 编辑配置文件：`vim ./debugtalk.py`
 - 修改 base_url
 
-####Tests should be able to run from command line
+#### Tests should be able to run from command line
 - run testcases: `hrun testcases/bank_t.yml` or `hrun testcases`
 - 建议自己搭建接口自动化独立的web服务，方便持续集成
     - web框架：django
     - 分布式任务框架：celery
     - 暴露api，方便持续集成平台实时触发接口自动化
-
-####Analysis the business requirement
-only accept bank country US, AU and CN
-have a field for payment method (can be either LOCAL or SWIFT)
-when it's SWIFT, customer needs to pass a valid swift code to us in the payload.
-#####原始需求
+##### 原始需求
 - 接口请求方式：POST
 - 有一个字段接收传入银行所属的国家，且只支持：US、AU、CN
 - 有一个字段接收传入支付方式，且仅支持：LOCAL 、SWIFT
 - 有一个字段接收快捷支付代码
-#####接口设计
+##### 接口设计
 - method：POST
 - Payload fields
     - payment_method：mandatory，(LOCAL | SWIFT)
