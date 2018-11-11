@@ -1,12 +1,12 @@
-#### Setup API Test framework using your most comfortable tech stack
+##### Setup API Test framework using your most comfortable tech stack
 - 语言：python3.6
 - 自动化框架：httprunner(unittest、requests)
 
-#### The tests will run in different environments, so make the endpoint url configurable
+##### The tests will run in different environments, so make the endpoint url configurable
 - 编辑配置文件：`vim ./debugtalk.py`
 - 修改 base_url
 
-#### Tests should be able to run from command line
+##### Tests should be able to run from command line
 - run testcases: `hrun testcases/bank_t.yml` or `hrun testcases`
 - 建议自己搭建接口自动化独立的web服务，方便持续集成
     - web框架：django
@@ -41,7 +41,7 @@
         - The swift code is not valid for the given bank country code: US
         - Length of 'swift_code' should be either 8 or 11
 
-#####测试用例
+##### 测试用例
 `用例参见脚本，先仅做初步覆盖`
 ##### 缺陷报告
 `缺陷报告参见report，执行失败处均为bug，暂不而外记录`
