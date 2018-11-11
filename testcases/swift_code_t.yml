@@ -1,0 +1,8 @@
+- config:
+    name: 当bank_country_code为 $bank_country_code 时,<br/>swift_code相关校验
+    parameters:
+        - bank_country_code: ['US','AU','CN']
+    request: $default_request
+
+- test:
+    suite: swift_code($bank_country_code)

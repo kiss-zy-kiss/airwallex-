@@ -1,0 +1,38 @@
+- config:
+    def: account_number($payment_method)
+
+- test:
+    name: bank_country_code为US时，account_number为空
+    api: bank12($payment_method)
+
+- test:
+    name: bank_country_code为US时，account_number长度为18
+    api: bank13($payment_method)
+
+- test:
+    name: bank_country_code为US时，account_number长度在[1,17]简化长度为8
+    api: bank14($payment_method)
+
+- test:
+    name: bank_country_code为AU时，account_number为5
+    api: bank15($payment_method)
+
+- test:
+    name: bank_country_code为AU时，account_number长度为10
+    api: bank16($payment_method)
+
+- test:
+    name: bank_country_code为AU时，account_number长度在[6,9]简化长度为8
+    api: bank17($payment_method)
+
+- test:
+    name: bank_country_code为CN时，account_number为7
+    api: bank18($payment_method)
+
+- test:
+    name: bank_country_code为CN时，account_number长度为21
+    api: bank19($payment_method)
+
+- test:
+    name: bank_country_code为CN时，account_number长度在[8,20]简化长度为8
+    api: bank20($payment_method)

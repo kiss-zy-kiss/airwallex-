@@ -1,0 +1,18 @@
+- config:
+    def: payment_method()
+
+- test:
+    name: 检查payment_method必填
+    api: bank1()
+
+- test:
+    name: 检查payment_method超出：LOCAL、SWIFT
+    api: bank2()
+
+- test:
+    name: payment_method为LOCAL，提示bank_country_code必填
+    api: bank3()
+
+- test:
+    name: payment_method为SWIFT，提示bank_country_code必填
+    api: bank4()

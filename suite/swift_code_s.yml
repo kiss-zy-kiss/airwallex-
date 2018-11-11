@@ -1,0 +1,22 @@
+- config:
+    def: swift_code($bank_country_code)
+
+- test:
+    name: 检查swift_code长度为9时的返回
+    api: bank21($bank_country_code)
+
+- test:
+    name: 检查swift_code长度为8时,<br/>swift_code[4:6] = bank_country_code的返回
+    api: bank22($bank_country_code)
+
+- test:
+    name: 检查swift_code长度为8时,<br/>swift_code[4:6] != bank_country_code的返回
+    api: bank23($bank_country_code)
+
+- test:
+    name: 检查swift_code长度为11时,<br/>swift_code[4:6] = bank_country_code的返回
+    api: bank24($bank_country_code)
+
+- test:
+    name: 检查swift_code长度为11时,<br/>swift_code[4:6] != bank_country_code的返回
+    api: bank25($bank_country_code)

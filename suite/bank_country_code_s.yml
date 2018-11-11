@@ -1,0 +1,18 @@
+- config:
+    def: bank_country_code($payment_method)
+
+- test:
+    name: 检查bank_country_code超出：US、AU、CN
+    api: bank5($payment_method)
+
+- test:
+    name: bank_country_code为US，提示bank_country_code必填
+    api: bank6($payment_method)
+
+- test:
+    name: bank_country_code为AU，提示bank_country_code必填
+    api: bank7($payment_method)
+
+- test:
+    name: bank_country_code为CN，提示bank_country_code必填
+    api: bank8($payment_method)

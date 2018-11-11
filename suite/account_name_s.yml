@@ -1,0 +1,14 @@
+- config:
+    def: account_name($payment_method,$bank_country_code)
+
+- test:
+    name: 检查account_name长度为1时的返回
+    api: bank9($payment_method,$bank_country_code)
+
+- test:
+    name: 检查account_name长度为11时的返回
+    api: bank10($payment_method,$bank_country_code)
+
+- test:
+    name: 检查account_name长度为[2,10]时的返回(简略长度为5)
+    api: bank11($payment_method,$bank_country_code)

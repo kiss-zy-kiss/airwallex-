@@ -1,0 +1,440 @@
+#bank
+- api:
+    def: bank($r_p,$status,$content,$payment_method,$bank_country_code,$account_name,$account_number,$swift_code,$aba,$bsb)
+    variables:
+        - uri: '/bank'
+        - status_code: ${str2int($status)}
+        - content_format: ${eval_str($content)}
+    request:
+        url: $uri
+        method: POST
+        json:
+            payment_method: $payment_method
+            bank_country_code: $bank_country_code
+            account_name: $account_name
+            account_number: $account_number
+            swift_code: $swift_code
+            aba: 123123
+            bsb: $bsb
+    setup_hooks:
+        - ${pop_parameter($request,$r_p)}
+    validate:
+        - eq: ["status_code", $status_code]
+        - eq: ["content", $content_format]
+
+- api:
+    def: bank1()
+    request:
+        url: '/bank'
+        method: POST
+    validate:
+        - eq: ["status_code", 400]
+        - eq: ["content.error", "'payment_method' field required, the value should be either 'LOCAL' or 'SWIFT'"]
+
+- api:
+    def: bank2()
+    request:
+        url: '/bank'
+        method: POST
+        json:
+            payment_method: LOCAL1
+    validate:
+        - eq: ["status_code", 400]
+        - eq: ["content.error", "'payment_method' field required, the value should be either 'LOCAL' or 'SWIFT'"]
+
+- api:
+    def: bank3()
+    request:
+        url: '/bank'
+        method: POST
+        json:
+            payment_method: LOCAL
+    validate:
+        - eq: ["status_code", 400]
+        - eq: ["content.error", "'bank_country_code' is required, and should be one of 'US', 'AU', or 'CN'"]
+
+- api:
+    def: bank4()
+    request:
+        url: '/bank'
+        method: POST
+        json:
+            payment_method: SWIFT
+    validate:
+        - eq: ["status_code", 400]
+        - eq: ["content.error", "'bank_country_code' is required, and should be one of 'US', 'AU', or 'CN'"]
+
+- api:
+    def: bank5($payment_method)
+    request:
+        url: '/bank'
+        method: POST
+        json:
+            payment_method: $payment_method
+            bank_country_code: AU1
+    validate:
+        - eq: ["status_code", 400]
+        - eq: ["content.error", "'bank_country_code' is required, and should be one of 'US', 'AU', or 'CN'"]
+
+- api:
+    def: bank6($payment_method)
+    request:
+        url: '/bank'
+        method: POST
+        json:
+            payment_method: $payment_method
+            bank_country_code: US
+    validate:
+        - eq: ["status_code", 400]
+        - eq: ["content.error", "'account_name' is required"]
+
+- api:
+    def: bank7($payment_method)
+    request:
+        url: '/bank'
+        method: POST
+        json:
+            payment_method: $payment_method
+            bank_country_code: AU
+    validate:
+        - eq: ["status_code", 400]
+        - eq: ["content.error", "'account_name' is required"]
+
+- api:
+    def: bank8($payment_method)
+    request:
+        url: '/bank'
+        method: POST
+        json:
+            payment_method: $payment_method
+            bank_country_code: CN
+    validate:
+        - eq: ["status_code", 400]
+        - eq: ["content.error", "'account_name' is required"]
+
+- api:
+    def: bank9($payment_method,$bank_country_code)
+    request:
+        url: '/bank'
+        method: POST
+        json:
+            payment_method: $payment_method
+            bank_country_code: $bank_country_code
+            account_name: J
+    validate:
+        - eq: ["status_code", 400]
+        - eq: ["content.error", "Length of account_name should be between 2 and 10"]
+
+- api:
+    def: bank10($payment_method,$bank_country_code)
+    request:
+        url: '/bank'
+        method: POST
+        json:
+            payment_method: $payment_method
+            bank_country_code: $bank_country_code
+            account_name: John Smith1
+    validate:
+        - eq: ["status_code", 400]
+        - eq: ["content.error", "Length of account_name should be between 2 and 10"]
+
+- api:
+    def: bank11($payment_method,$bank_country_code)
+    request:
+        url: '/bank'
+        method: POST
+        json:
+            payment_method: $payment_method
+            bank_country_code: $bank_country_code
+            account_name: John Smith
+    validate:
+        - eq: ["status_code", 400]
+        - eq: ["content.error", "'account_number' is required"]
+
+- api:
+    def: bank12($payment_method)
+    request:
+        url: '/bank'
+        method: POST
+        json:
+            payment_method: $payment_method
+            bank_country_code: US
+            account_name: John Smith
+            account_number: ''
+    validate:
+        - eq: ["status_code", 400]
+        - eq: ["content.error", "Length of account_number should be between 1 and 17 when bank_country_code is 'US'"]
+
+- api:
+    def: bank13($payment_method)
+    request:
+        url: '/bank'
+        method: POST
+        json:
+            payment_method: $payment_method
+            bank_country_code: US
+            account_name: John Smith
+            account_number: '123456789012345678'
+    validate:
+        - eq: ["status_code", 400]
+        - eq: ["content.error", "Length of account_number should be between 1 and 17 when bank_country_code is 'US'"]
+
+- api:
+    def: bank14($payment_method)
+    variables:
+        - status_code: ${format_content($payment_method,status_code,US)}
+        - format_content: ${format_content($payment_method,content,US)}
+    request:
+        url: '/bank'
+        method: POST
+        json:
+            payment_method: $payment_method
+            bank_country_code: US
+            account_name: John Smith
+            account_number: '12345678'
+    validate:
+        - eq: ["status_code", $status_code]
+        - eq: ["content", $format_content]
+
+- api:
+    def: bank15($payment_method)
+    request:
+        url: '/bank'
+        method: POST
+        json:
+            payment_method: $payment_method
+            bank_country_code: AU
+            account_name: John Smith
+            account_number: '12345'
+    validate:
+        - eq: ["status_code", 400]
+        - eq: ["content.error", "Length of account_number should be between 6 and 9 when bank_country_code is 'AU'"]
+
+- api:
+    def: bank16($payment_method)
+    request:
+        url: '/bank'
+        method: POST
+        json:
+            payment_method: $payment_method
+            bank_country_code: AU
+            account_name: John Smith
+            account_number: '1234567890'
+    validate:
+        - eq: ["status_code", 400]
+        - eq: ["content.error", "Length of account_number should be between 6 and 9 when bank_country_code is 'AU'"]
+
+- api:
+    def: bank17($payment_method)
+    variables:
+        - status_code: ${format_content($payment_method,status_code,AU)}
+        - format_content: ${format_content($payment_method,content,AU)}
+    request:
+        url: '/bank'
+        method: POST
+        json:
+            payment_method: $payment_method
+            bank_country_code: AU
+            account_name: John Smith
+            account_number: '12345678'
+    validate:
+        - eq: ["status_code", $status_code]
+        - eq: ["content", $format_content]
+
+- api:
+    def: bank18($payment_method)
+    request:
+        url: '/bank'
+        method: POST
+        json:
+            payment_method: $payment_method
+            bank_country_code: CN
+            account_name: John Smith
+            account_number: '12345'
+    validate:
+        - eq: ["status_code", 400]
+        - eq: ["content.error", "Length of account_number should be between 8 and 20 when bank_country_code is 'CN'"]
+
+- api:
+    def: bank19($payment_method)
+    request:
+        url: '/bank'
+        method: POST
+        json:
+            payment_method: $payment_method
+            bank_country_code: CN
+            account_name: John Smith
+            account_number: '1234567890'
+    validate:
+        - eq: ["status_code", 400]
+        - eq: ["content.error", "Length of account_number should be between 8 and 20 when bank_country_code is 'CN'"]
+
+- api:
+    def: bank20($payment_method)
+    variables:
+        - status_code: ${format_content($payment_method,status_code,CN)}
+        - format_content: ${format_content($payment_method,content,CN)}
+    request:
+        url: '/bank'
+        method: POST
+        json:
+            payment_method: $payment_method
+            bank_country_code: CN
+            account_name: John Smith
+            account_number: '12345678'
+    validate:
+        - eq: ["status_code", $status_code]
+        - eq: ["content", $format_content]
+
+- api:
+    def: bank21($bank_country_code)
+    request:
+        url: '/bank'
+        method: POST
+        json:
+            payment_method: SWIFT
+            bank_country_code: $bank_country_code
+            account_name: John Smith
+            account_number: '12345678'
+            swift_code: 123456789
+    validate:
+        - eq: ["status_code", 400]
+        - eq: ["content.error", "Length of 'swift_code' should be either 8 or 11"]
+
+- api:
+    def: bank22($bank_country_code)
+    variables:
+        - swift_code: ${format_swift_code($bank_country_code,8,1)}
+        - status_code: ${format_swift_code_response($bank_country_code,status_code)}
+        - format_content: ${format_swift_code_response($bank_country_code,content)}
+    request:
+        url: '/bank'
+        method: POST
+        json:
+            payment_method: SWIFT
+            bank_country_code: $bank_country_code
+            account_name: John Smith
+            account_number: '12345678'
+            swift_code: $swift_code
+    validate:
+        - eq: ["status_code", $status_code]
+        - eq: ["content", $format_content]
+
+- api:
+    def: bank23($bank_country_code)
+    variables:
+        - swift_code: ${format_swift_code($bank_country_code,8,0)}
+        - error_message: ${format_error_message($bank_country_code)}
+    request:
+        url: '/bank'
+        method: POST
+        json:
+            payment_method: SWIFT
+            bank_country_code: $bank_country_code
+            account_name: John Smith
+            account_number: '12345678'
+            swift_code: $swift_code
+    validate:
+        - eq: ["status_code", 400]
+        - eq: ["content.error", $error_message]
+
+- api:
+    def: bank24($bank_country_code)
+    variables:
+        - swift_code: ${format_swift_code($bank_country_code,11,1)}
+        - status_code: ${format_swift_code_response($bank_country_code,status_code)}
+        - format_content: ${format_swift_code_response($bank_country_code,content)}
+    request:
+        url: '/bank'
+        method: POST
+        json:
+            payment_method: SWIFT
+            bank_country_code: $bank_country_code
+            account_name: John Smith
+            account_number: '12345678'
+            swift_code: $swift_code
+    validate:
+        - eq: ["status_code", $status_code]
+        - eq: ["content", $format_content]
+
+- api:
+    def: bank25($bank_country_code)
+    variables:
+        - swift_code: ${format_swift_code($bank_country_code,11,0)}
+        - error_message: ${format_error_message($bank_country_code)}
+    request:
+        url: '/bank'
+        method: POST
+        json:
+            payment_method: SWIFT
+            bank_country_code: $bank_country_code
+            account_name: John Smith
+            account_number: '12345678'
+            swift_code: $swift_code
+    validate:
+        - eq: ["status_code", 400]
+        - eq: ["content.error", $error_message]
+
+- api:
+    def: bank26($payment_method)
+    request:
+        url: '/bank'
+        method: POST
+        json:
+            payment_method: SWIFT
+            bank_country_code: AU
+            account_name: John Smith
+            account_number: '12345678'
+            swift_code: 1234AU78
+            bsb: '123456'
+    validate:
+        - eq: ["status_code", 200]
+        - eq: ["content.success", "Bank details saved"]
+
+- api:
+    def: bank27($payment_method)
+    request:
+        url: '/bank'
+        method: POST
+        json:
+            payment_method: SWIFT
+            bank_country_code: AU
+            account_name: John Smith
+            account_number: '12345678'
+            swift_code: 1234AU78
+            bsb: '1234567'
+    validate:
+        - eq: ["status_code", 400]
+        - eq: ["content.error", "Length of 'bsb' should be 6"]
+
+- api:
+    def: bank28($payment_method)
+    request:
+        url: '/bank'
+        method: POST
+        json:
+            payment_method: SWIFT
+            bank_country_code: US
+            account_name: John Smith
+            account_number: '12345678'
+            swift_code: 1234US78
+            aba: '123456789'
+    validate:
+        - eq: ["status_code", 200]
+        - eq: ["content.success", "Bank details saved"]
+
+- api:
+    def: bank29($payment_method)
+    request:
+        url: '/bank'
+        method: POST
+        json:
+            payment_method: SWIFT
+            bank_country_code: US
+            account_name: John Smith
+            account_number: '12345678'
+            swift_code: 1234US78
+            aba: '1234567890'
+    validate:
+        - eq: ["status_code", 400]
+        - eq: ["content.error", "Length of 'aba' should be 9"]

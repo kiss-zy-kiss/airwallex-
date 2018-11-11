@@ -1,0 +1,18 @@
+- config:
+    def: bsb_aba($payment_method)
+
+- test:
+    name: 检查len(bsb) = 6
+    api: bank26($payment_method)
+
+- test:
+    name: 检查len(bsb) != 6
+    api: bank27($payment_method)
+
+- test:
+    name: 检查len(aba) = 9
+    api: bank28($payment_method)
+
+- test:
+    name: 检查len(aba) != 9
+    api: bank29($payment_method)

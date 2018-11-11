@@ -1,0 +1,8 @@
+- config:
+    name: 当payment_method为 $payment_method 时，bank_country_code相关校验
+    parameters:
+        - payment_method: ['LOCAL','SWIFT']
+    request: $default_request
+
+- test:
+    suite: bank_country_code($payment_method)

@@ -1,0 +1,6 @@
+- config:
+    name: payment_method相关校验
+    request: $default_request
+
+- test:
+    suite: payment_method()

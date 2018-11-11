@@ -1,0 +1,8 @@
+- config:
+    name: 当payment_method为 $payment_method 时，<br/>校验bsb或aba的长度
+    parameters:
+        - payment_method: ['LOCAL','SWIFT']
+    request: $default_request
+
+- test:
+    suite: bsb_aba($payment_method)
